@@ -1,0 +1,5 @@
+def grow(arr):
+    count=1
+    for i in arr:
+        count=count*i
+    return count
