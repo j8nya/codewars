@@ -1,0 +1,7 @@
+def evens_and_odds(n):
+    #.replace('0..','')-заменяем префикс на пустоту
+    if n%2==0:#четное
+        result=str(bin(n).replace('0b','')) 
+    else:
+       result=str(hex(n).replace('0x','')) 
+    return result
