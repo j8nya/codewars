@@ -1,0 +1,5 @@
+def flatten_and_sort(array):
+    massiv=[]
+    for i in array:
+        massiv+=i
+    return sorted(massiv)
