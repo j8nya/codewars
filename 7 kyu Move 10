@@ -1,0 +1,14 @@
+def move_ten(st):
+    result=''
+    for i in st:
+        #ascii a-97......z-122
+        #ORD Возвращает числовое представление для указанного символа.
+        #ord('a')  # 97
+        move_letter=ord(i)+10
+        if move_letter>122:
+            #CHR Возвращает символ по его числовому представлению.
+            #chr(97)  # a 
+            result+=chr(move_letter-26)
+        else:
+            result+=chr(move_letter)
+    return result
