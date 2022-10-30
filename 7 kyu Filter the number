@@ -1,0 +1,6 @@
+def filter_string(string):
+    out = ''
+    for i in string:
+        if i.isdigit() == True:
+            out += i
+    return int(out)
