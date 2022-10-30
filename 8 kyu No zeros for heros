@@ -1,0 +1,6 @@
+def no_boring_zeros(n):
+    # STR.RSTRIP - Возвращает копию указанной строки, с конца которой устранены указанные символы.
+    if n == 0:
+        return 0
+    else:
+        return int(str(n).strip('0'))
