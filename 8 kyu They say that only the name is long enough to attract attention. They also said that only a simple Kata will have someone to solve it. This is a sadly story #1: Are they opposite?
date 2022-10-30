@@ -1,0 +1,9 @@
+def is_opposite(s1,s2):
+    if len(s1) == 0 or len(s2) == 0:
+        return False
+    for i in range(len(s1)):
+        #STR.SWAPCASE-Возвращает копию строки, в которой каждая буква будет иметь противоположный регистр.
+        if s1[i].swapcase() == s2[i]:
+            return True
+        else:
+            return False
