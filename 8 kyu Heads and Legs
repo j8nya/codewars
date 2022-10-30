@@ -1,0 +1,23 @@
+def animals(heads, legs):
+    #chic+cow=heads
+    #2chic+4cow=legs
+    
+    #chic=heads-cow
+    #2(heads-cow)+4cow=legs
+    
+    #chic=heads-cow
+    #2heads-2cow+4cow=legs 
+    
+    #chic=heads-cow
+    #2heads+2cow=legs
+    
+    #chic=heads-cow
+    #2cow=legs-2heads
+
+    #chic=heads-cow
+    #cow=(legs-2heads)/2
+    
+    cows=(legs-2*heads)/2
+    chickens=heads-cows
+
+    return ((chickens, cows) if cows == int(cows) and chickens == int(chickens) and cows>=0 and chickens >=0 else "No solutions")
