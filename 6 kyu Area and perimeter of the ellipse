@@ -1,0 +1,7 @@
+from math import pi
+
+def ellipse(a, b):
+    perimeter = round(pi*(3/2*(a+b)-(a*b)**0.5),1)
+    area = round((pi * a * b),1)
+    out = "Area: " + str(area) +", perimeter: " +str(perimeter)
+    return out
