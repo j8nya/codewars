@@ -1,0 +1,6 @@
+def add_length(str_):
+    array=[]
+    slovo=str_.split(' ')
+    for i in slovo:
+        array.append(i+' '+str(len(i)))
+    return array
