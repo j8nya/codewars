@@ -1,0 +1,4 @@
+def without_last(lst):
+    lst_copy=list(lst)
+    lst_copy.pop() # removes the last element
+    return lst_copy
