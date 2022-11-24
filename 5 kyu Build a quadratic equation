@@ -1,0 +1,25 @@
+import re
+def str2int(c):
+    if c=="-":
+        return -1
+    elif c=="+" or c=="":
+        return 1
+    else:
+        return int(c)
+def int2str(c,x):
+    if c==0:
+        return ""
+    elif c==1 and x!="":
+        return f"+{x}"
+    elif c>0:
+        return f"+{c}{x}"
+    elif c==-1 and x!="":
+        return f"-{x}"
+    else:
+        return f"{c}{x}"
+        
+def quadratic_builder(expression):
+    a,x,b,c,y,d=re.match(r"\(([\+\-0-9]*)([A-Za-z])([\+\-0-9]*)\)\(([\+\-0-9]*)([A-Za-z])([\+\-0-9]*)\)",expression).groups()
+    assert x==y
+    a,b,c,d=str2int(a),int(b),str2int(c),int(d)
+    return f'{int2str(a*c,f"{x}^2")}{int2str(a*d+c*b,x)}{int2str(b*d,"")}'.strip("+")
