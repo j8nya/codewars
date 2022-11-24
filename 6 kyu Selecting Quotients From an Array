@@ -1,0 +1,10 @@
+def sel_quot(a, n, s=None):
+    s, a, r = s and s[0].lower() == "o", sorted(set(a)), set()
+    for x in reversed(a):
+        for y in a:
+            m, p = divmod(x, y)
+            if m < n:
+                break
+            if not p and m >= n:
+                r.add((m, (x, y)))
+    return sorted(x for x in r if s is None or x[0] % 2 == s)
