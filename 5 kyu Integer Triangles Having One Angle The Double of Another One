@@ -1,0 +1,33 @@
+from fractions import gcd
+
+memo = {}
+
+def per_ang_twice(n_):
+    global memo
+    per_max = 1500000
+    if len(memo) == 0:
+        triangDict = {}
+        for n in range(1, int(per_max/2) + 1):
+            for m in range(n + 1, int(per_max/2) + 1):
+                if m >= 2 * n: break
+                a = n**2
+                b = m * n
+                c = m**2 - n**2
+                p = a + b + c
+                if p > per_max: break
+                if p <= per_max:
+                    triple = [a, b, c]
+                    if gcd(a,b) != 1 and gcd(a,c) != 1: continue
+                    triple.sort()
+                    if p not in triangDict:
+                        triangDict[p] = [tuple(triple)]
+                    elif p in triangDict:
+                        triangDict[p].append(tuple(triple))
+        sol_list = list(triangDict.items())
+        sol_list.sort()
+        count = 1
+        for k, v in sol_list:
+            if len(v) > 1: v.sort()
+            memo[count] = [k, v]
+            count += 1
+    return memo[n_]
