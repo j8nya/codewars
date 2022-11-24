@@ -1,0 +1,12 @@
+def minesweeper(matrix):
+    m, n = len(matrix), len(matrix[0])
+    def count(i, j):
+        return sum(
+            matrix[i+di][j+dj]
+            for di, dj in [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+            if 0 <= i + di < m and 0 <= j + dj < n
+        )
+    return [
+        [count(i, j) for j in range(n)]
+        for i in range(m)
+    ]
