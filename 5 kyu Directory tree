@@ -1,0 +1,23 @@
+from typing import List
+
+
+def tree(root: str, files: List[str]):
+    
+    padders = ( ('├── ', '│   '),
+                ('└── ', '    ') )
+    
+    def dfs(root, tree, pad='', link='', follow=''):
+        yield pad + link + root
+        pad += follow
+        lst  = sorted(tree.items(), key=lambda it: (not it[1], it[0]))
+        for n,(k,v) in enumerate(lst,1):
+            yield from dfs(k, v, pad, *padders[n==len(lst)] )
+    
+    tree = {}
+    for path in files:
+        d = tree
+        for v in path.split('/'):
+            d[v] = d.get(v,{})
+            d = d[v]
+            
+    yield from dfs(root, tree)
