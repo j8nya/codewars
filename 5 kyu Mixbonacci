@@ -1,0 +1,17 @@
+def mixbonacci(pattern, length):
+
+    def nacci(starts, sum_indexes):
+        while 1:
+            yield starts[0]
+            starts = starts[1:] + [sum(starts[i] for i in sum_indexes)]
+    
+    sequences = {
+        'fib': nacci([0, 1], [0, 1]),
+        'pad': nacci([1, 0, 0], [0, 1]),
+        'jac': nacci([0, 1], [0, 0, 1]),
+        'pel': nacci([0, 1], [0, 1, 1]),
+        'tri': nacci([0, 0, 1], [0, 1, 2]),
+        'tet': nacci([0, 0, 0, 1], [0, 1, 2, 3]),
+    }
+
+    return pattern and [next(sequences[pattern[i % len(pattern)]]) for i in range(length)]
