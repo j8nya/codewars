@@ -1,0 +1,9 @@
+def build_pyramid(s, n):
+    a = ''
+    for i in range(n+1):
+        a = a + (' ' * ((len(s)//2) * (n-i)))
+        b = list(s)
+        for j in b:
+            a = a + (j * i)
+        a = a + '\n'
+    return a[((len(s)//2) * n) + 1:-1]
