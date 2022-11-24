@@ -1,0 +1,20 @@
+
+def look_and_say(data='1', maxlen=5):
+    if maxlen <=0:
+        return []
+    dir = []
+    i = 0
+    for d in str(data):
+        if not dir:
+            dir.append((1, d))
+        else:
+            if dir[i][1] == d:
+                dir[i] = (dir[i][0]+1,d)
+            else:
+                dir.append((1, d))
+                i += 1
+    new_data = ""
+    for x in dir:
+        for y in x:
+            new_data += str(y)
+    return [new_data] + look_and_say(new_data, maxlen-1)
