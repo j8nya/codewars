@@ -1,0 +1,6 @@
+def min_path(grid, x, y):
+    paths = [0] + [float('inf')] * (x + 1)
+    for j in range(y + 1):
+        for i in range(x + 1):
+            paths[i] = grid[j][i] + min(paths[i-1], paths[i])
+    return paths[x]
