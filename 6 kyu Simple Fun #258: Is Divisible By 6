@@ -1,0 +1,9 @@
+def is_divisible_by_6(s):
+    init_s = s
+    l = []
+    for i in range(10):
+        s = int(s.replace('*', str(i)))
+        if s%6 == 0:
+            l.append(str(s))
+        s = init_s
+    return l
