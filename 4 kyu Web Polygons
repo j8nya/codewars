@@ -1,0 +1,15 @@
+https://www.codewars.com/kata/609243c36e796b003e79e6b5/train/python
+
+def webpolygons(ns):
+    res, ms, pt = 0, [[1, 1]], 1
+    for n in ns:
+        if n != 1:
+            ms.append([1, n])
+            pt *= n
+        elif len(ms) > 1:
+            s, p = ms.pop()
+            pt //= p
+            ms[-1][0] *= s * p
+            res += (p*(p-1)//2 * s**2) * pt
+    return res
+    
