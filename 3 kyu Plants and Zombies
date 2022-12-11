@@ -1,0 +1,250 @@
+https://www.codewars.com/kata/5a5db0f580eba84589000979/train/python
+
+
+class Lawn:
+    """Класс, представляющий поле в игре Plants and Zombies"""
+
+    def __init__(self, lawn_str, zombies):
+        self.lawn_size_x = len(lawn_str[0])
+        self.lawn_size_y = len(lawn_str)
+        self.plants = []
+        self.zombies = []
+        self.move_number = None
+        self.create_lawn(lawn_str, zombies)
+        self.plants_sorting()
+
+    class Plant:
+        """Класс, представляющий растерие"""
+        # Урон (по умолчанию - 1)
+        damage = 1
+
+        # Тип
+        SUPER = 'S'
+
+        def __init__(self, lawn, x, y, type):
+            self.lawn = lawn
+            self.x = x
+            self.y = y
+            if type != self.SUPER:
+                type = int(type)
+                self.damage = type
+            self.type = type
+            self.attacked_cells = self.get_attacked_cells()
+
+        class PlantsWin(Exception):
+            pass
+
+        def __str__(self):
+            return str(self.type).ljust(4, ' ')
+
+        def delete(self):
+            """Удаление растения"""
+            self.lawn.plants.remove(self)
+            self.lawn.put_value(self.x, self.y, None)
+
+        def get_attacked_cells(self):
+            """Возвращает ячейки, которые подвергнутся атаке"""
+            if self.type == self.SUPER:
+                cells = [
+                    [],
+                    [[x, self.y] for x in range(self.x + 1, self.lawn.lawn_size_x)],
+                    []
+                ]
+
+                n = 1
+                while self.x + n <= self.lawn.lawn_size_x - 1 and self.y - n >= 0:
+                    cells[0].append([self.x + n, self.y - n])
+                    n += 1
+
+                n = 1
+                while self.x + n <= self.lawn.lawn_size_x - 1 and self.y + n <= self.lawn.lawn_size_y - 1:
+                    cells[2].append([self.x + n, self.y + n])
+                    n += 1
+
+                return cells
+
+            else:
+                return [[x, self.y] for x in range(self.x, self.lawn.lawn_size_x)]
+
+        def attack(self):
+            """Атака"""
+            if self.type == self.SUPER:
+                for list_cells in self.attacked_cells:
+                    for cell in list_cells:
+                        value = self.lawn.get_value(*cell)
+                        if isinstance(value, self.lawn.Zombie):
+                            value.damage()
+                            break
+            else:
+                for i in range(self.damage):
+                    for cell in self.attacked_cells:
+                        value = self.lawn.get_value(*cell)
+                        if isinstance(value, self.lawn.Zombie):
+                            value.damage()
+                            break
+
+    class Zombie:
+        """Класс, представляющий зомби"""
+        # Скорость
+        speed = 1
+
+        # Статус
+        ALIVE = 1
+        DEAD = 0
+
+        def __init__(self, lawn, move_number, row, hp):
+            self.lawn = lawn
+            self.move_number = int(move_number)
+            self.x = None
+            self.y = int(row)
+            self.hp = int(hp)
+            self.stat = self.ALIVE
+            self.moving = False
+            self.deleted = False
+
+        class ZombieWin(Exception):
+            pass
+
+        def __str__(self):
+            return str('Z' + str(self.hp)).ljust(4, ' ')
+
+        def change_zombie_location(self):
+            """Изменение местоположения зомби (движение на одну клетку)"""
+            prev_x = self.x + 1
+            if prev_x < self.lawn.lawn_size_x:
+                self.lawn.put_value(prev_x, self.y, None)
+            self.lawn.put_value(self.x, self.y, self)
+
+        def delete(self):
+            """Удаление зомби в случае его смерти"""
+            if not self.deleted:
+                self.lawn.zombies.remove(self)
+                self.lawn.put_value(self.x, self.y, None)
+                self.deleted == True
+
+        def can_move(self):
+            """Проверка, может ли зомби двигаться"""
+            # Если зомби достиг края карты - игра окончена
+            if self.x is not None and self.x <= 0:
+                raise self.ZombieWin
+            # Если жизни зомби закончились - зомби умирает
+            if self.stat == self.ALIVE and self.hp <= 0:
+                self.stat = self.DEAD
+            # Если зомби мертв - он не может двигаться (да ладно?!)
+            if self.stat == self.DEAD:
+                return False
+            else:
+                # Если зомби может двигаться - разрещить движение
+                if self.moving:
+                    return True
+                else: # Если не может - проверить, сможет ли сейчас.
+                    if self.lawn.move_number >= self.move_number:
+                        self.moving = True
+                        return True
+                    else:
+                        return False
+
+        def remove_dead_plant(self):
+            """Удаление убитого растения"""
+            value = self.lawn.get_value(self.x, self.y)
+            if isinstance(value, self.lawn.Plant):
+                value.delete()
+
+        def move(self):
+            """Движение зомби"""
+            if self.can_move():
+                if self.x is None:
+                    self.x = self.lawn.lawn_size_x
+                self.x -= 1
+                self.remove_dead_plant()
+                self.change_zombie_location()
+            elif self.stat == self.DEAD:
+                self.delete()
+
+        def damage(self):
+            """Получение урона от выстрела. Если жизней не осталось - зомби погибает"""
+            self.hp -= 1
+            if self.hp <= 0:
+                self.delete()
+
+    def get_value(self, x, y):
+        """Получение значения из двумерного списка, представляющего поле"""
+        return self.lawn[y][x]
+
+    def put_value(self, x, y, value):
+        """Поместить значение в поле"""
+        self.lawn[y][x] = value
+
+    def create_lawn(self, lawn_str, zombies):
+        """Создание поля из входных данных"""
+        self.lawn = [[None] * self.lawn_size_x for _ in range(self.lawn_size_y)]
+        # Создание и помещение на поле растений
+        for y, string in enumerate(lawn_str):
+            for x, v in enumerate(string):
+                if v != " ":
+                    plant = self.Plant(self, x, y, v)
+                    self.plants.append(plant)
+                    self.lawn[y][x] = plant
+        # Создание зомби
+        for zombie_info in zombies:
+            zombie = self.Zombie(self, *zombie_info)
+            self.zombies.append(zombie)
+
+    def plants_sorting(self):
+        """Сортировка растений. Нумерованные растения стреляют одновременно,
+        а S растения - в порядке справа налево и сверху вниз"""
+        numeric = []
+        super = []
+        for pl in self.plants:
+            if pl.type == self.Plant.SUPER:
+                super.append(pl)
+            else:
+                numeric.append(pl)
+        super_sorting_y = lambda p: p.y
+        super_sorting_x = lambda p: p.x
+        super.sort(key=super_sorting_y)
+        super.sort(key=super_sorting_x, reverse=True)
+        numeric.extend(super)
+        self.plants = numeric
+
+    def is_game_over(self):
+        """Проверка на конец игры"""
+        if len(self.zombies) <= 0:
+            return True
+        elif not all([z.x > 0 for z in self.zombies if z.x is not None]):
+            return True
+        else:
+            return False
+
+    def zombie_move(self):
+        """Движение всех зомби"""
+        for zombie in self.zombies:
+            zombie.move()
+
+    def plants_attack(self):
+        """Атака растений"""
+        for plant in self.plants:
+            plant.attack()
+
+    def game(self):
+        """Основной цикл игры"""
+        self.move_number = 0
+        while not self.is_game_over():
+            try:
+                self.zombie_move()
+            except self.Zombie.ZombieWin:
+                return self.move_number
+            try:
+                self.plants_attack()
+            except self.Plant.PlantsWin:
+                return None
+            self.move_number += 1
+        else:
+            if len(self.zombies) <= 0:
+                return None
+            else:
+                return self.move_number
+
+def plants_and_zombies(lawn,zombies):
+    pwz = Lawn(lawn, zombies)
+    return pwz.game()
