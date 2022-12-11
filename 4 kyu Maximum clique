@@ -1,0 +1,26 @@
+https://www.codewars.com/kata/55064222d54715566800043d
+
+def maximum_clique(adjacency):
+    if not adjacency: return set()
+
+    graph = {}
+    for a, row in enumerate(adjacency):
+        for b, connected in enumerate(row):
+            if connected:
+                graph.setdefault(a, set()).add(b)
+    if not graph: return {0}
+
+    def clique_search(subset, clique):
+        nonlocal max_clique
+        if not subset:
+            max_clique = max((max_clique, clique), key=len)
+            return
+        while subset:
+            if len(subset) + len(clique) <= len(max_clique):
+                return
+            x = subset.pop()
+            clique_search(subset & graph[x], clique | {x})
+
+    max_clique = set()
+    clique_search(set(graph), set())
+    return max_clique
